@@ -2,6 +2,9 @@ import pygame
 from sys import exit
 from random import randint, choice
 
+def toggle_pause():
+    global game_paused
+    game_paused = not game_paused
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
@@ -42,7 +45,7 @@ class Player(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
 	def __init__(self,type):
 		super().__init__()
-		
+
 		if type == 'fly':
 			fly_1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
 			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
@@ -118,6 +121,19 @@ game_message_rect = game_message.get_rect(center=(400, 330))
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer, 1500)
 
+# Create a transparent button surface
+button_surface = pygame.Surface((80, 40), pygame.SRCALPHA)
+pygame.draw.rect(button_surface, (255, 0, 0, 128), pygame.Rect(0, 0, 80, 40))  # Transparent red background
+
+# Draw the button text on the transparent surface
+pause_font = pygame.font.Font(None, 36)
+pause_text = pause_font.render("Pause", True, (255, 255, 255))
+text_rect = pause_text.get_rect(center=(button_surface.get_width() // 2, button_surface.get_height() // 2))
+button_surface.blit(pause_text, text_rect)
+
+# Define the position of the pause button
+pause_button_rect = button_surface.get_rect(topleft=(700, 20))
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -127,12 +143,15 @@ while True:
         if game_active:
             if event.type == obstacle_timer:
                 obstacle_group.add(Obstacle(choice(['fly', 'snail', 'snail', 'snail'])))
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
-                game_paused = not game_paused
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
                 start_time = int(pygame.time.get_ticks() / 1000)
+
+        # Check for mouse clicks on the pause button
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if pause_button_rect.collidepoint(event.pos):
+                toggle_pause()
 
     if game_active and not game_paused:
         screen.blit(sky_surface, (0, 0))
@@ -161,9 +180,12 @@ while True:
             screen.blit(score_message, score_message_rect)
 
         if game_paused:
-            pause_message = test_font.render('Paused', False, (255, 0, 0))  # Red "Paused" message
+            pause_message = test_font.render('Paused', False, (255, 0, 0))
             pause_message_rect = pause_message.get_rect(center=(400, 200))
             screen.blit(pause_message, pause_message_rect)
+
+    # Draw the transparent button surface
+    screen.blit(button_surface, pause_button_rect.topleft)
 
     pygame.display.update()
     clock.tick(60)
