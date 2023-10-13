@@ -1,3 +1,5 @@
+import playsound
+import winsound
 import pygame
 from sys import exit
 from random import randint, choice
@@ -44,6 +46,7 @@ class Obstacle(pygame.sprite.Sprite):
 		super().__init__()
 		
 		if type == 'fly':
+			winsound.Beep(1000, 1000)
 			fly_1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
 			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
 			self.frames = [fly_1,fly_2]
@@ -133,6 +136,8 @@ while True:
 
 
 	if game_active:
+		
+		playsound.playsound("my_sound.wav")
 		screen.blit(sky_surface,(0,0))
 		screen.blit(ground_surface,(0,300))
 		score = display_score()
