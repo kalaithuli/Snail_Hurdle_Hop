@@ -85,6 +85,7 @@ def collision_sprite():
 		return False
 	else: return True
 
+
 pygame.init()
 
 # Create the game window
@@ -115,8 +116,9 @@ game_name_rect = game_name.get_rect(center=(400, 80))
 game_message = test_font.render('Press space to run', False, (111, 196, 169))
 game_message_rect = game_message.get_rect(center=(400, 330))
 
+# Reduced the obstacle timer interval to create more obstacles
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 1500)
+pygame.time.set_timer(obstacle_timer, 1000)  # Reduced from 1500 to 1000 milliseconds
 
 while True:
     for event in pygame.event.get():
