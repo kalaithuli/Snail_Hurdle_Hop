@@ -1,3 +1,5 @@
+from pygame import mixer
+
 import pygame
 from sys import exit
 from random import randint, choice
@@ -49,6 +51,9 @@ class Obstacle(pygame.sprite.Sprite):
 		super().__init__()
 		
 		if type == 'fly':
+			mixer.init()
+			beep=mixer.sound('bell.wav')
+			beep.play()
 			fly_1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()
 			fly_2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()
 			self.frames = [fly_1,fly_2]
@@ -156,6 +161,7 @@ while True:
 
 
 	if game_active:
+		pygame.mixer.music.load('file.mp3')
 		screen.blit(sky_surface,(0,0))
 		screen.blit(ground_surface,(0,300))
 		score = display_score()
